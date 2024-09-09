@@ -1,8 +1,8 @@
-export class Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-  image: string;
+export class Category {
+  public id?: number;
+  public name?: string;
+  public description?: string;
+  public price?: number;
+  public stock?: number;
+  public image?: string;
 }

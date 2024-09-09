@@ -9,28 +9,30 @@ import {
   Post,
   Put,
   Query,
-  Res,
 } from "@nestjs/common";
-
-import { Response } from "express";
+import { ParseIntPipe } from "src/common/parse-int/parse-int.pipe";
+import { CreateCategoryDTO, UpdateCategoryDTO } from "src/dtos/categories.dtos";
+import { Category } from "src/entities/product.entity";
 import { CategoriesService } from "src/services/categories/categories.service";
 
 @Controller("categories")
 export class CategoriesController {
-  constructor(private readonly categoryService: CategoriesService) {}
+  public constructor(private readonly categoryService: CategoriesService) {}
 
-  @Get("")
+  @Get()
   @HttpCode(HttpStatus.ACCEPTED)
-  public newEndpoint(): string {
-    return "Yo soy nuevo 2.0";
+  public getCategories(): Category[] {
+    //return "Yo soy nuevo 2.0";
+    return this.categoryService.findAll();
   }
 
   @Get(":categoryId")
   @HttpCode(HttpStatus.ACCEPTED)
-  public getProduct(@Res() response: Response, @Param("categoryId") categoryId: string): void {
-    response.status(200).send({
-      message: `product ${categoryId}`,
-    });
+  public getCategoryById(@Param("categoryId", ParseIntPipe) categoryId: number): Category {
+    // response.status(200).send({
+    //   message: `product ${categoryId}`,
+    // });
+    return this.categoryService.findOne(categoryId);
   }
 
   @Get(":id/products/:productId")
@@ -51,24 +53,26 @@ export class CategoriesController {
 
   /**Post */
   @Post("")
-  public create(@Body() payload: string): {} {
-    return {
-      message: "Accion de crear",
-      payload,
-    };
+  public create(@Body() payload: CreateCategoryDTO): Category {
+    // return {
+    //   message: "Accion de crear",
+    //   payload,
+    // };
+    return this.categoryService.create(payload);
   }
 
   /** Put */
   @Put(":id")
-  public update(@Param("id") id: number, @Body() payload: string): {} {
-    return {
-      id,
-      payload,
-    };
+  public update(@Param("id") id: string, @Body() payload: UpdateCategoryDTO): Category {
+    // return {
+    //   id,
+    //   payload,
+    // };
+    return this.categoryService.update(+id, payload);
   }
 
   @Delete(":id")
-  public delete(@Param("id") id: number): {} {
-    return id;
+  public delete(@Param("id") id: string): boolean {
+    return this.categoryService.remove(+id);
   }
 }
